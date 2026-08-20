@@ -92,7 +92,7 @@ function stationsFor(): (Omit<SeedStation, "demoStreams"> & { demoStreams: DemoS
   return template.map((t, i) => ({ ...t, demoStreams: DEMO_STREAMS[i % DEMO_STREAMS.length] }));
 }
 
-function run() {
+export function seedDatabase(): void {
   initSchema();
 
   const insertCity = db.prepare(`
@@ -154,4 +154,7 @@ function run() {
   console.log("⚠️  All seeded streams are DEMO placeholders (SomaFM), not real broadcaster feeds.");
 }
 
-run();
+// Run immediately if this script is executed directly via CLI
+if (require.main === module) {
+  seedDatabase();
+}

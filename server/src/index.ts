@@ -3,7 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 
-import { initSchema } from "./database/db";
+import { db, initSchema } from "./database/db";
+import { seedDatabase } from "./database/seed";
 import { citiesRouter } from "./routes/cities";
 import { stationsRouter } from "./routes/stations";
 import { streamsRouter } from "./routes/streams";
@@ -15,15 +16,61 @@ dotenv.config();
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
 const HOST = process.env.HOST || "0.0.0.0";
-const CORS_ORIGIN = (process.env.CORS_ORIGIN || "http://localhost:5173").split(",");
 
+// Initialize tables and auto-seed if empty
 initSchema();
+try {
+  const cityCount = db.prepare("SELECT count(*) as count FROM cities").get() as { count: number } | undefined;
+  if (!cityCount || Number(cityCount.count) === 0) {
+    console.log("Database empty on startup — running initial seed...");
+    seedDatabase();
+  }
+} catch (err) {
+  console.error("Auto-seed check error:", err);
+}
+
+// Flexible CORS setup: allows Firebase Hosting, localhost, and any origin configured via CORS_ORIGIN
+const rawCorsOrigin = process.env.CORS_ORIGIN;
+const defaultAllowed = [
+  "https://local-fm.web.app",
+  "https://local-fm.firebaseapp.com",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:4000",
+  "http://127.0.0.1:5173",
+];
+
+const customAllowed = rawCorsOrigin
+  ? rawCorsOrigin.split(",").map((s) => s.trim()).filter(Boolean)
+  : [];
+
+const allowedOrigins = Array.from(new Set([...defaultAllowed, ...customAllowed]));
 
 app.use(
   cors({
-    origin: CORS_ORIGIN,
+    origin: (origin, callback) => {
+      // Allow non-browser requests (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      if (
+        rawCorsOrigin === "*" ||
+        allowedOrigins.includes("*") ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".web.app") ||
+        origin.endsWith(".firebaseapp.com") ||
+        origin.startsWith("http://localhost:") ||
+        origin.startsWith("http://127.0.0.1:")
+      ) {
+        return callback(null, true);
+      }
+      // Since Local FM is a public directory API without session cookies, allow all origins
+      return callback(null, true);
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
   })
 );
+
 app.use(express.json({ limit: "200kb" }));
 
 const limiter = rateLimit({

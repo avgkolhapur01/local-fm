@@ -38,10 +38,13 @@ function normalizeLiveStation(raw: LiveRawStation): RadioStation {
   };
 }
 
-const API_BASE_URL =
+const API_BASE_URL = (
   typeof import.meta.env.VITE_API_BASE_URL === "string" && import.meta.env.VITE_API_BASE_URL.trim().length > 0
-    ? import.meta.env.VITE_API_BASE_URL
-    : "http://localhost:4000/api";
+    ? import.meta.env.VITE_API_BASE_URL.trim()
+    : import.meta.env.DEV
+    ? "http://localhost:4000/api"
+    : "https://local-fm.onrender.com/api"
+).replace(/\/+$/, "");
 
 class ApiError extends Error {
   status?: number;
