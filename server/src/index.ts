@@ -35,6 +35,16 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
+app.get("/", (req, res) => {
+  res.json({
+    ok: true,
+    service: "local-fm-server",
+    message: "Local FM API is running. Use /api/health or /api/stations",
+    docs: "/api/health",
+    time: new Date().toISOString(),
+  });
+});
+
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, service: "local-fm-server", time: new Date().toISOString() });
 });
