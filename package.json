@@ -1,0 +1,29 @@
+{
+  "name": "local-fm",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local FM — listen to local FM radio stations over the Internet.",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n SERVER,CLIENT -c blue,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "build": "npm run build -w server && npm run build -w client",
+    "build:server": "npm run build -w server",
+    "build:client": "npm run build -w client",
+    "start": "npm run start -w server",
+    "seed": "npm run seed -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  },
+  "dependencies": {
+    "firebase": "^12.18.0"
+  }
+}

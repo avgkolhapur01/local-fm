@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: #170c08;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: #e87522;
+  color: #170c08;
+}
+
+/* Slim, unobtrusive scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(242, 181, 68, 0.25);
+  border-radius: 999px;
+}
+
+.font-display {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+
+.font-signature {
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+}
+
+/* Visible focus ring for keyboard users, hidden for mouse users */
+:focus-visible {
+  outline: 2px solid #e87522;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Cinematic background — vintage Murphy radio, monsoon-evening Pune */
+/* ---------------------------------------------------------------- */
+
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.app-backdrop__image {
+  position: absolute;
+  inset: 0;
+  background-image: url("/bg-monsoon-radio.jpg");
+  background-size: cover;
+  background-position: center 38%;
+  background-repeat: no-repeat;
+}
+
+@supports (background-attachment: fixed) {
+  @media (min-width: 640px) and (pointer: fine) {
+    .app-backdrop__image {
+      background-attachment: fixed;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .app-backdrop__image {
+    background-position: 30% center;
+  }
+}
+
+/* Layered readability gradient: darker at the edges/bottom where UI sits,
+   warm and clear through the center so the radio and skyline stay visible. */
+.app-backdrop__vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(15, 8, 5, 0.55) 0%, rgba(15, 8, 5, 0.08) 22%, rgba(15, 8, 5, 0.12) 55%, rgba(12, 6, 4, 0.86) 100%),
+    linear-gradient(90deg, rgba(10, 5, 3, 0.55) 0%, rgba(10, 5, 3, 0.05) 30%, rgba(10, 5, 3, 0.05) 70%, rgba(10, 5, 3, 0.5) 100%);
+}
+
+/* A whisper of film grain / rain-light texture so glass panels don't feel
+   like they're floating on a flat photo. Extremely subtle by design. */
+.app-backdrop__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: radial-gradient(rgba(255, 220, 170, 0.9) 0.5px, transparent 0.5px);
+  background-size: 3px 3px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Glass surfaces — every bg-card / bg-bg-secondary panel in the app */
+/* automatically picks up warm blur + hairline border here, so this  */
+/* single rule re-skins station cards, the player, nav, modals, etc. */
+/* ---------------------------------------------------------------- */
+
+.bg-card {
+  background-color: rgba(53, 27, 16, 0.52);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 220, 180, 0.1);
+}
+
+.bg-bg-secondary {
+  background-color: rgba(30, 17, 11, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
