@@ -14,6 +14,7 @@ dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
+const HOST = process.env.HOST || "0.0.0.0";
 const CORS_ORIGIN = (process.env.CORS_ORIGIN || "http://localhost:5173").split(",");
 
 initSchema();
@@ -56,6 +57,6 @@ app.use((err: any, req: express.Request, res: express.Response, _next: express.N
   res.status(500).json({ error: true, message: "Internal server error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`🎙️  Local FM API listening on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`🎙️  Local FM API listening on http://${HOST}:${PORT}`);
 });
