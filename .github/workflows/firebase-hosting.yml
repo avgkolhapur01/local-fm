@@ -21,7 +21,7 @@ jobs:
 
       - name: Build client
         env:
-          VITE_API_BASE_URL: https://local-fm-api.onrender.com/api
+          VITE_API_BASE_URL: https://local-fm.onrender.com/api
         run: npm run build -w client
 
       - name: Deploy to Firebase Hosting
